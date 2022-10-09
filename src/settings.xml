@@ -1,0 +1,18 @@
+<Settings>
+	<mutation>500</mutation>
+	<addsub>10</addsub>
+	<death_age>500</death_age>
+	<grass_food>60</grass_food>
+	<grass_grow>3000</grass_grow>
+	<min_size>120</min_size>
+	<carrion_fade>0</carrion_fade>
+	<stay_cost>1.0</stay_cost>
+	<turn_cost>2.0</turn_cost>
+	<go_cost>2.0</go_cost>
+	<bump_cost>5.0</bump_cost>
+	<eat_cost>5.0</eat_cost>
+	<clone_cost>2.0</clone_cost>
+	<attack_cost>5.0</attack_cost>
+	<work_ratio>200.0</work_ratio>
+	<steal_food>false</steal_food>
+</Settings>

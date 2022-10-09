@@ -1,0 +1,111 @@
+EVIE is a an evolution emulator
+
+Tiles:
+The world is a 2d grid of tiles.  The vegetation of each tile can be nothing, grass, carrion, or rock. Coloured back (RGB-000), green (RGB-283), red (RGB-900) and grey (RGB-333) respectively.
+These colours are hard coded in the file tile.h.  Tiles can have a food value.  The food value of grass can be altered by adjusting the variable grass_food.
+Grass tiles have a chance of growing into a nothing tile, dictated by the variable grass_grow.
+Carrion tiles have a chance of fading to nothing, dictated by the variable carrion_fade.
+
+Animals:
+Animals are created from their genome (a string of letters)
+The first 10 letters encode charactersitics of the animal:
+	colour		-	animal colour in rgb
+	adult_size	-	size an animal needs to be in order to successfully clone
+	baby_size	-	size of a baby
+	vore		-	animals can be purely herbivorous (vore=0) or purely carnivorous (vore=9) or omnivorous - somewhere in between
+				if an animal is herbivorous it gets 100% of the food value of grass, and 0% of the food value of carrion
+				if an animal is carnivorous it gets 0% of the food value of grass, and 100% of the food value of carrion
+Animals have from 1 to MAXNEURONES = 20 (see animal.h) neurones
+Each neurone is encoded by each subsequent 15 letters of the animals genome
+Each neurone controls 10 possible actions (neurone.h):
+	enum NeuroneType {STAY,LEFT,RIGHT,GO,EAT,CLONE,ATTACK,SPEED,STATE1,STATE2};
+
+	STAY	- do nothing			- cost controlled by variable stay_cost
+	LEFT	- turn left			- cost controlled by turn_cost
+	RIGHT	- turn right			- cost controlled by turn_cost
+	GO	- move forwards 		- cost controlled by go_cost*(1+(animal_size/work_ratio))
+			  	if square in front is another animal or a rock the animal also incurs bump_cost*(1+(animal_size/work_ratio))
+	EAT	- eat from tile 		- cost controlled by eat_cost
+				if steal_food variable is set to 1, food can be stolen from animal in front as carrion
+	CLONE   - if animal is adult then clone - cost controlled by clone_cost
+				during cloning there is a chance of mutation controlled by the variable - mutation
+				there is also a chance of addition or deletion mutation
+				(duplication of existing gene) or removal of gene controlled by the variable - addsub
+				this is as a percentage of mutation. Therefore with no mutation, addsub is irrelevant
+	ATTACK  - attack animal in front	- cost controlled by attack_cost
+				success of killing is dependant on the size and vore of the two animals
+				failure leads to death of the killer
+	SPEED	- a speed neurone enables the alert level of the animal to be altered
+				speed of +1.0 has 100% chance of a turn
+				speed of  0.0 has 60% chance of a turn
+				speed of -1.0 has 10% chance of a turn
+	STATE1
+	STATE2	- each animal has two state variables. State neurones control the values of these states.
+				these allow for some degree of memory of past actions
+
+Neurone Inputs are:
+RGB value of facing tile. Adult (0 or 1). State1 State2 (-1.0 to +1.0)
+
+		R	G	B	Adult	State1	State2
+		|	|	|	|	|	|
+		 \	 \	|	|      /       /
+		  \       \     |       |     /'      /
+		   \       \    |       |    /       /
+		    \       \   |       |   /       /
+		     \       \   \     /   /       /	weighted inputs (input * each wight)
+		      \       \   \   /   /       /
+		       \       \   \ /   /       /
+			\	\   |	/	/
+			 \       \  |  /       /
+			  \       \ | /	      /
+			   \	   \|/	     /
+			    \	    |	    /
+			     \      |      /
+			      N E U R O N E
+				    |
+				    |			threshold value (output - threshold)
+				    V
+
+				O U T P U T
+
+The output of speed and state neurones change the speed and states for the next turn
+The action neurone with the highest output is the action to be performed that turn
+
+variables can be controlled using the 'set' command
+
+Two possible graphical windows can be displayed using the 'open' command:
+	main - opens a world map showing each tile - requires a size variable (1-5)
+	mini - opens a graphical representation of populations
+			- green is grass_coverage
+			- blue is omnivore population
+			- white is herbivore population
+			- red is carnivore population
+		mwr - is mini window refresh rate ( number of turns between each display )
+		mws - is mini window scale - scaling of animal populations for bringing low and high populations into view
+*** NB ***
+	windows should NOT be closed by clicking on x, but must be closed using close command
+
+Analysis:
+
+stat	command displays the animal with the highest number of kills, and the animal with the highest number of clones
+meme 	command displays animals by colour and neurone type.  Can take colour as argument, and then only shows neurone type of animals of that colour
+		- this command can be used for identifying if any speciation has occured
+schema	command displays genome of particular animal colour.  Can be used to see how homogenous a colour of animals is, and how genes are related
+demog	command displays demographics of animals of a particular colour
+kill	command kills all animals of a particular colour or all
+test    command sets up a test animal (by number 0 - (MAPSIZE*MAPSIZE)-1)
+		when simulation is run, instead of world stats being displayed, the chosen animal stats are displayed.
+		the simulation is stopped on the death of the animal
+
+Simple startup:
+        ./configure
+	make
+	make install (as root)
+
+	evie
+		open main 1
+		open mini
+		run		- and watch evolution unfold
+
+populations can be saved using the save command
+there are some example populations in the examples directory these can be loaded with the load command
