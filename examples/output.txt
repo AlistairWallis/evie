@@ -1,0 +1,14 @@
+world::world(250)
+malloc(62500 *          12) = 0x00000000b7715008
+malloc(62500 *        1048) = 0x00000000b389d008
+world::reset()
+void world::set_terrain()
+void world::respawn(25000)
+g2: can not load font: '-*-times-medium-r-normal--12-*-*-*-*-*-*-*'
+g2: using '-*-times-medium-r-normal--11-*-*-*-*-*-*-*' instead
+world::~world()
+free(0x00000000b7715008)
+free(0x00000000b389d008)
+world::world(250)
+malloc(62500 *          12) = 0x00000000b7715008
+malloc(62500 *        1048) = 0x00000000b389d008
