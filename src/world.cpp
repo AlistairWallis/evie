@@ -159,22 +159,26 @@ void world::hills(int Nmountains,int maxsize,int minsize)
 		      else if (k>=mapsize){yc=k-mapsize;}
 		      else {xc=j;yc=k;}
 		      lt=&(mytiles[xc+yc*mapsize]);
-		      lt->terrain=ROCK;
-		      lt->food=0;
-		      if (lt->panimal)
-			{
-			  lt->panimal->alive=false;
-                          statistics.update(lt->panimal);
-			  lt->panimal=NULL;
-			}
+			  if (lt)
+			  {
+		      		lt->terrain=ROCK;
+		      		lt->food=0;
+		      		if (lt->panimal)
+				{
+			  		lt->panimal->alive=false;
+                          		statistics.update(lt->panimal);
+			  		lt->panimal=NULL;
+				}
 #ifndef NO_GRAPHICS
-		      if (mainopen)
-			{
-			  gmain.display_pixel(xc,yc,ROCK_COLOUR);
-			}
+		      		if (mainopen)
+					{
+			  			gmain.display_pixel(xc,yc,ROCK_COLOUR);
+					}
 #endif
-		      rocks++;
-		    }
+		      		rocks++;
+		    
+			  }
+		  }
 		}
 	    }
 	}
